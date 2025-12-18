@@ -50,7 +50,7 @@ page = st.sidebar.radio(
 
 # Page routing
 if page == "🏠 Home":
-    import dashboard.pages.home
+    import pages.home
     dashboard.pages.home.main()
     
 elif page == "🔍 Philosophical Analysis":
