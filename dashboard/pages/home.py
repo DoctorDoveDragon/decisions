@@ -34,7 +34,7 @@ def main():
         """)
         
         if st.button("Go to Philosophical Analysis →"):
-            st.switch_page("pages/analysis.py")
+            st.switch_page("analysis.py")
     
     with col2:
         st.subheader("🔧 Mechanical Process Ontology")
@@ -51,7 +51,7 @@ def main():
         """)
         
         if st.button("Go to Mechanical Processes →"):
-            st.switch_page("pages/mechanical_processes.py")
+            st.switch_page("mechanical_processes.py")
     
     st.divider()
     
