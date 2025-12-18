@@ -51,15 +51,15 @@ page = st.sidebar.radio(
 # Page routing
 if page == "🏠 Home":
     import pages.home
-    dashboard.pages.home.main()
+    pages.home.main()
     
 elif page == "🔍 Philosophical Analysis":
-    import dashboard.pages.analysis
-    dashboard.pages.analysis.main()
+    import pages.analysis
+    pages.analysis.main()
     
 elif page == "🔧 Mechanical Processes":
-    import dashboard.pages.mechanical_processes
-    dashboard.pages.mechanical_processes.main()
+    import pages.mechanical_processes
+    pages.mechanical_processes.main()
     
 elif page == "📊 Comparative Engine":
     st.title("Comparative Engine")
