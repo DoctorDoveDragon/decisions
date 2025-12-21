@@ -1,0 +1,585 @@
+"""
+🚀 ENHANCED PROFESSIONAL DASHBOARD
+Cosmic Navy Blue/Green Theme
+"""
+
+import streamlit as st
+import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
+from datetime import datetime
+import pandas as pd
+
+# ============================================
+# COSMIC THEME CONFIGURATION
+# ============================================
+
+COSMIC_CSS = """
+<style>
+    /* Cosmic Background with Nebula Effect */
+    .stApp {
+        background: linear-gradient(135deg, 
+            #0a0e17 0%, 
+            #0c1221 25%, 
+            #0e172b 50%, 
+            #101d35 75%, 
+            #12233f 100%);
+        background-attachment: fixed;
+        color: #e0e7ff;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Cosmic Header with Starfield Effect */
+    .cosmic-header {
+        background: linear-gradient(90deg, 
+            rgba(16, 42, 67, 0.9) 0%, 
+            rgba(22, 65, 92, 0.9) 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        box-shadow: 0 0 40px rgba(64, 224, 208, 0.1),
+                    inset 0 0 20px rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cosmic-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, 
+            rgba(255, 255, 255, 0.05) 0%, 
+            transparent 70%);
+        animation: starfield 20s linear infinite;
+    }
+    
+    @keyframes starfield {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Professional Cards with Glass Morphism */
+    .professional-card {
+        background: rgba(16, 42, 67, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        margin: 1rem 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 20, 40, 0.3);
+    }
+    
+    .professional-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(64, 224, 208, 0.6);
+        box-shadow: 0 12px 48px rgba(64, 224, 208, 0.2);
+    }
+    
+    /* Dimension Cards - Specific Colors */
+    .dimension-formula {
+        background: linear-gradient(135deg, 
+            rgba(30, 58, 138, 0.8) 0%, 
+            rgba(30, 64, 175, 0.9) 100%);
+        border-left: 4px solid #3b82f6;
+    }
+    
+    .dimension-etymology {
+        background: linear-gradient(135deg, 
+            rgba(6, 95, 70, 0.8) 0%, 
+            rgba(4, 120, 87, 0.9) 100%);
+        border-left: 4px solid #10b981;
+    }
+    
+    .dimension-theory {
+        background: linear-gradient(135deg, 
+            rgba(76, 29, 149, 0.8) 0%, 
+            rgba(91, 33, 182, 0.9) 100%);
+        border-left: 4px solid #8b5cf6;
+    }
+    
+    .dimension-culture {
+        background: linear-gradient(135deg, 
+            rgba(180, 83, 9, 0.8) 0%, 
+            rgba(217, 119, 6, 0.9) 100%);
+        border-left: 4px solid #f59e0b;
+    }
+    
+    .dimension-utility {
+        background: linear-gradient(135deg, 
+            rgba(185, 28, 28, 0.8) 0%, 
+            rgba(220, 38, 38, 0.9) 100%);
+        border-left: 4px solid #ef4444;
+    }
+    
+    /* Navigation Styling */
+    .nav-container {
+        background: rgba(16, 42, 67, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1rem;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+    }
+    
+    .nav-item {
+        padding: 0.8rem 1rem;
+        margin: 0.3rem 0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #cbd5e1;
+        border-left: 3px solid transparent;
+    }
+    
+    .nav-item:hover {
+        background: rgba(64, 224, 208, 0.1);
+        color: #ffffff;
+        border-left: 3px solid #40e0d0;
+    }
+    
+    .nav-item.active {
+        background: rgba(30, 64, 175, 0.3);
+        color: #ffffff;
+        border-left: 3px solid #3b82f6;
+    }
+    
+    /* Buttons with Cosmic Glow */
+    .stButton > button {
+        background: linear-gradient(90deg, 
+            #1e3a8a 0%, 
+            #1e40af 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.7rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(30, 64, 175, 0.3);
+    }
+    
+    .stButton > button:hover {
+        background: linear-gradient(90deg, 
+            #1e40af 0%, 
+            #2563eb 100%);
+        box-shadow: 0 6px 30px rgba(30, 64, 175, 0.5);
+        transform: translateY(-2px);
+    }
+    
+    .primary-button {
+        background: linear-gradient(90deg, 
+            #047857 0%, 
+            #059669 100%) !important;
+        box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3) !important;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4 {
+        background: linear-gradient(90deg, #e0e7ff, #40e0d0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+    }
+    
+    /* Metric Cards */
+    .metric-card {
+        background: rgba(16, 42, 67, 0.6);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        background: rgba(30, 64, 175, 0.3);
+        border-color: rgba(64, 224, 208, 0.4);
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #40e0d0, #3b82f6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background: rgba(16, 42, 67, 0.6);
+        padding: 8px;
+        border-radius: 12px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        color: #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 20px;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(90deg, #1e3a8a, #1e40af);
+        color: white;
+    }
+    
+    /* Cosmic Particle Animation */
+    .cosmic-particle {
+        position: fixed;
+        width: 2px;
+        height: 2px;
+        background: rgba(64, 224, 208, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -1;
+    }
+</style>
+
+<script>
+// Cosmic particle animation
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.stApp');
+    for(let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('cosmic-particle');
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animation = `float ${3 + Math.random() * 5}s infinite ease-in-out`;
+        particle.style.opacity = Math.random() * 0.5 + 0.3;
+        container.appendChild(particle);
+    }
+    
+    // Add floating animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-20px) translateX(10px); }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+"""
+
+# ============================================
+# DASHBOARD CONFIGURATION
+# ============================================
+
+st.set_page_config(
+    page_title="Cosmic Decision Intelligence",
+    page_icon="🌌",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Inject cosmic CSS
+st.markdown(COSMIC_CSS, unsafe_allow_html=True)
+
+# ============================================
+# SIDEBAR NAVIGATION
+# ============================================
+
+with st.sidebar:
+    st.markdown("""
+    <div class="nav-container">
+        <h3 style="margin-bottom: 1.5rem;">🌌 COSMIC NAVIGATION</h3>
+    """, unsafe_allow_html=True)
+    
+    # Navigation menu
+    nav_options = [
+        ("🏠 COSMIC DASHBOARD", "dashboard"),
+        ("🔮 PHILOSOPHICAL ORACLE", "philosophy"),
+        ("⚙️ MECHANICAL COSMOS", "mechanical"),
+        ("📊 QUANTUM COMPARISONS", "comparisons"),
+        ("📚 COSMIC ARCHIVES", "archives"),
+        ("⚡ ENERGY FLOW", "energy")
+    ]
+    
+    for icon_text, page_id in nav_options:
+        is_active = st.session_state.get('current_page', 'dashboard') == page_id
+        active_class = "active" if is_active else ""
+        
+        if st.button(f"{icon_text}", key=page_id, use_container_width=True):
+            st.session_state.current_page = page_id
+            st.rerun()
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Cosmic metrics
+    st.markdown("""
+    <div style="margin-top: 2rem;">
+        <h4>🌀 COSMIC METRICS</h4>
+        <div class="metric-card">
+            <div class="metric-value">92%</div>
+            <div style="color: #94a3b8; font-size: 0.9rem;">WISDOM CONVERGENCE</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">18</div>
+            <div style="color: #94a3b8; font-size: 0.9rem;">ACTIVE DIMENSIONS</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================
+# MAIN CONTENT - COSMIC DASHBOARD
+# ============================================
+
+if st.session_state.get('current_page', 'dashboard') == 'dashboard':
+    
+    # Cosmic Header
+    st.markdown("""
+    <div class="cosmic-header">
+        <h1 style="margin-bottom: 0.5rem;">🌌 COSMIC DECISION INTELLIGENCE</h1>
+        <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 0;">
+            Where philosophy meets quantum mechanics in the fabric of decision-making
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Top Metrics Row
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">⚡ DECISION VELOCITY</div>
+            <div class="metric-value">0.92c</div>
+            <div style="font-size: 0.8rem; color: #60a5fa;">+12% this cycle</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">🌀 ENTROPY FLOW</div>
+            <div class="metric-value">∆2.4</div>
+            <div style="font-size: 0.8rem; color: #34d399;">Optimal range</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">🌐 CONSCIOUS PATHS</div>
+            <div class="metric-value">∞</div>
+            <div style="font-size: 0.8rem; color: #fbbf24;">Infinite possibilities</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="metric-card">
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">💫 WISDOM DENSITY</div>
+            <div class="metric-value">4.8</div>
+            <div style="font-size: 0.8rem; color: #f87171;">Peak awareness</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Main Content Area
+    col_left, col_right = st.columns([2, 1])
+    
+    with col_left:
+        # Cosmic Decision Matrix
+        st.markdown("""
+        <div class="professional-card">
+            <h3>🔭 COSMIC DECISION MATRIX</h3>
+            <p style="color: #cbd5e1;">Navigate multidimensional decision spaces with quantum precision</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Create cosmic visualization
+        fig = create_cosmic_visualization()
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Five Dimensions of Understanding
+        st.markdown("""
+        <div class="professional-card">
+            <h3>🌈 FIVE DIMENSIONAL COSMOLOGY</h3>
+            <p style="color: #cbd5e1;">Complete understanding through multidimensional analysis</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        display_five_dimensions()
+    
+    with col_right:
+        # Quantum Insights Panel
+        st.markdown("""
+        <div class="professional-card">
+            <h3>⚡ QUANTUM INSIGHTS</h3>
+            <p style="color: #cbd5e1;">Real-time cosmic wisdom extraction</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        insights = [
+            "🌠 Entropy flow suggests optimal decision window: NOW",
+            "🌀 Stoic-Quantum resonance detected at 92% confidence",
+            "⚛️ Utility wavefunction collapsing toward maximum benefit",
+            "📐 Cultural dimensions aligning with universal constants",
+            "💫 Etymology reveals ancient decision-making patterns"
+        ]
+        
+        for insight in insights:
+            st.markdown(f"""
+            <div style="background: rgba(30, 58, 138, 0.3); 
+                       padding: 1rem; 
+                       border-radius: 12px; 
+                       margin: 0.5rem 0;
+                       border-left: 3px solid #40e0d0;">
+                {insight}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Quick Decision Input
+        st.markdown("""
+        <div class="professional-card">
+            <h3>🚀 QUICK DECISION PORTAL</h3>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.form("quick_decision"):
+            decision = st.text_area("Cosmic Question:", 
+                                   placeholder="What path through the quantum foam shall I take?")
+            tradition = st.selectbox("Analysis Lens:", 
+                                    ["Stoic-Quantum", "Utilitarian-Wave", "Buddhist-Void", "Cosmic-Synthesis"])
+            
+            if st.form_submit_button("🌌 ANALYZE WITH COSMIC INTELLIGENCE", type="primary"):
+                st.success("🌀 Quantum analysis initiated... Wisdom converging")
+
+# ============================================
+# VISUALIZATION FUNCTIONS
+# ============================================
+
+def create_cosmic_visualization():
+    """Create a cosmic-themed visualization"""
+    # Generate cosmic data
+    theta = np.linspace(0, 2*np.pi, 100)
+    r = np.random.rand(100) * 10
+    
+    fig = go.Figure()
+    
+    # Add cosmic spiral
+    fig.add_trace(go.Scatterpolar(
+        r=r,
+        theta=theta,
+        mode='lines',
+        line=dict(color='#40e0d0', width=3),
+        name='Cosmic Flow'
+    ))
+    
+    # Add decision nodes
+    for i in range(8):
+        angle = i * np.pi/4
+        fig.add_trace(go.Scatterpolar(
+            r=[r[i*12]],
+            theta=[theta[i*12]],
+            mode='markers+text',
+            marker=dict(size=20, color='#3b82f6'),
+            text=[f'D{i+1}'],
+            textposition="middle center",
+            name=f'Decision Node {i+1}'
+        ))
+    
+    fig.update_layout(
+        polar=dict(
+            bgcolor='rgba(10, 14, 23, 0.8)',
+            radialaxis=dict(visible=False),
+            angularaxis=dict(visible=False)
+        ),
+        showlegend=False,
+        height=400,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(t=0, b=0, l=0, r=0)
+    )
+    
+    return fig
+
+def display_five_dimensions():
+    """Display the five dimensions with cosmic styling"""
+    
+    dimensions = [
+        ("📐 FORMULA DIMENSION", 
+         "Mathematical fabric of reality", 
+         "Quantum equations & cosmic constants",
+         "dimension-formula"),
+        
+        ("📜 ETYMOLOGY DIMENSION", 
+         "Linguistic origins of understanding", 
+         "Ancient terms, modern revelations",
+         "dimension-etymology"),
+        
+        ("🧪 THEORY DIMENSION", 
+         "Scientific foundations of being", 
+         "From Newton to quantum consciousness",
+         "dimension-theory"),
+        
+        ("🏛️ CULTURE DIMENSION", 
+         "Societal interpretation of cosmos", 
+         "Myths, rituals, and cosmic wisdom",
+         "dimension-culture"),
+        
+        ("⚙️ UTILITY DIMENSION", 
+         "Practical application of knowledge", 
+         "Turning understanding into action",
+         "dimension-utility")
+    ]
+    
+    for title, subtitle, description, css_class in dimensions:
+        st.markdown(f"""
+        <div class="professional-card {css_class}">
+            <h4 style="margin-bottom: 0.5rem;">{title}</h4>
+            <div style="color: #e0e7ff; font-size: 0.9rem; margin-bottom: 0.5rem;">{subtitle}</div>
+            <div style="color: #94a3b8; font-size: 0.85rem;">{description}</div>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+                <span style="font-size: 0.8rem; color: #cbd5e1;">🌀 Quantum Coherence: 92%</span>
+                <span style="font-size: 0.8rem; color: #cbd5e1;">⚡ Energy Flow: Optimal</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ============================================
+# OTHER PAGES (Placeholder for now)
+# ============================================
+
+elif st.session_state.current_page == 'philosophy':
+    st.markdown("""
+    <div class="cosmic-header">
+        <h1>🔮 PHILOSOPHICAL ORACLE</h1>
+        <p style="color: #94a3b8;">Ancient wisdom meets quantum computation</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("Philosophical analysis interface coming soon...")
+
+elif st.session_state.current_page == 'mechanical':
+    st.markdown("""
+    <div class="cosmic-header">
+        <h1>⚙️ MECHANICAL COSMOS</h1>
+        <p style="color: #94a3b8;">Understanding the machinery of reality</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("Mechanical process analysis interface coming soon...")
+
+# ============================================
+# FOOTER
+# ============================================
+
+st.markdown("---")
+st.markdown("""
+<div style="text-align: center; color: #64748b; padding: 2rem 0;">
+    <div>🌌 COSMIC DECISION INTELLIGENCE PLATFORM • QUANTUM WISDOM EDITION</div>
+    <div style="font-size: 0.9rem; margin-top: 0.5rem;">
+        <span style="color: #40e0d0;">🌀 Entropic Balance:</span> Optimal • 
+        <span style="color: #3b82f6;">📐 Dimensional Coherence:</span> 98% • 
+        <span style="color: #10b981;">🌱 Wisdom Growth:</span> +2.4%/cycle
+    </div>
+</div>
+""", unsafe_allow_html=True)
