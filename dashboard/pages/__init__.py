@@ -12,6 +12,7 @@ __all__ = [
     "analysis",
     "mechanical_processes",
     "philosophical_analysis",
-    "3_🧠_Mechanical_Processes"  # existing filename - present for reference only
+    # Note: The file "3_🧠_Mechanical_Processes.py" exists but should not be
+    # imported directly. Use "mechanical_processes" instead for canonical import.
 ]
 __version__ = "0.1.0"
