@@ -58,56 +58,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Navigation
-st.sidebar.title("🧭 Navigation")
-
-page = st.sidebar.radio(
-    "Go to",
-    [
-        "🏠 Home",
-        "🔍 Philosophical Analysis", 
-        "🔧 Mechanical Processes",
-        "📊 Comparative Engine",
-        "📚 Research Tools",
-        "⚙️ Configuration"
-    ]
-)
-
-# Page routing
-if page == "🏠 Home":
-    # Import and run home page
-    try:
-        from dashboard.pages import home
-        home.main()
-    except ImportError as e:
-        st.error(f"Home page module not found: {e}")
-        st.info("Creating default home page...")
-        show_home_page()
-        
-elif page == "🔍 Philosophical Analysis":
-    try:
-        from dashboard.pages import analysis
-        analysis.main()
-    except ImportError as e:
-        st.error(f"Analysis page module not found: {e}")
-        show_analysis_page()
-        
-elif page == "🔧 Mechanical Processes":
-    try:
-        from dashboard.pages import mechanical_processes
-        mechanical_processes.main()
-    except ImportError as e:
-        st.error(f"Mechanical processes module not found: {e}")
-        show_mechanical_processes_page()
-        
-elif page == "📊 Comparative Engine":
-    show_comparative_engine_page()
-    
-elif page == "📚 Research Tools":
-    show_research_tools_page()
-    
-elif page == "⚙️ Configuration":
-    show_configuration_page()
 
 def show_home_page():
     """Default home page if module is missing"""
@@ -174,7 +124,7 @@ def show_home_page():
         """, unsafe_allow_html=True)
         
         if st.button("Go to Philosophical Analysis →", key="phil_btn"):
-            st.query_params = {"page": "analysis"}
+            st.experimental_set_query_params(page="analysis")
     
     with col2:
         st.markdown("""
@@ -199,7 +149,7 @@ def show_home_page():
         """, unsafe_allow_html=True)
         
         if st.button("Go to Mechanical Processes →", key="mech_btn"):
-            st.query_params = {"page": "mechanical_processes"}
+            st.experimental_set_query_params(page="mechanical_processes")
     
     # Quick start
     st.markdown("""
@@ -227,6 +177,7 @@ def show_home_page():
     </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
 def show_analysis_page():
     """Default philosophical analysis page"""
@@ -441,6 +392,59 @@ def show_configuration_page():
             st.success("✅ Configuration saved!")
             st.info("Settings will be applied after restart.")
 
+
+# --- Sidebar navigation and routing (after helper functions are defined) ---
+st.sidebar.title("🧭 Navigation")
+
+page = st.sidebar.radio(
+    "Go to",
+    [
+        "🏠 Home",
+        "🔍 Philosophical Analysis", 
+        "🔧 Mechanical Processes",
+        "📊 Comparative Engine",
+        "📚 Research Tools",
+        "⚙️ Configuration"
+    ]
+)
+
+# Page routing
+if page == "🏠 Home":
+    # Import and run home page
+    try:
+        from dashboard.pages import home
+        home.main()
+    except Exception as e:
+        st.error(f"Home page module not found or failed to load: {e}")
+        st.info("Creating default home page...")
+        show_home_page()
+        
+elif page == "🔍 Philosophical Analysis":
+    try:
+        from dashboard.pages import analysis
+        analysis.main()
+    except Exception as e:
+        st.error(f"Analysis page module not found or failed to load: {e}")
+        show_analysis_page()
+        
+elif page == "🔧 Mechanical Processes":
+    try:
+        from dashboard.pages import mechanical_processes
+        mechanical_processes.main()
+    except Exception as e:
+        st.error(f"Mechanical processes module not found or failed to load: {e}")
+        show_mechanical_processes_page()
+        
+elif page == "📊 Comparative Engine":
+    show_comparative_engine_page()
+    
+elif page == "📚 Research Tools":
+    show_research_tools_page()
+    
+elif page == "⚙️ Configuration":
+    show_configuration_page()
+
 if __name__ == "__main__":
-    # Check if running as main
-    st.rerun()
+    # Running under "streamlit run dashboard/app.py" will execute this file.
+    # No forced rerun here to avoid infinite rerun loops.
+    pass
