@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Comparative Decision Intelligence platform"
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "MIT" }
 authors = [ { name = "DoctorDoveDragon" } ]
 
 dependencies = [
@@ -17,3 +16,8 @@ dependencies = [
 
 [project.scripts]
 decisions-dashboard = "decisions.dashboard.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["decisions*"]
+exclude = ["dashboard*"]
