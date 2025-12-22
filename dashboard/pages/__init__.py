@@ -11,8 +11,9 @@ __author__ = "Comparative Decision Intelligence Team"
 Dashboard Pages Module
 """
 
+# Note: We don't import mechanical_processes here to avoid loading its heavy dependencies
+# It will be imported on-demand when needed
 from . import home
 from . import analysis
-from . import mechanical_processes
 
-__all__ = ["home", "analysis", "mechanical_processes"]
+__all__ = ["home", "analysis"]
