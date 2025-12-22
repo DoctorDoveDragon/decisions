@@ -450,11 +450,20 @@ def main():
     ]
 
     # Determine desired default page from query params (if present)
-    query_params = st.experimental_get_query_params()
-    requested_page = None
-    if "page" in query_params:
-        raw = query_params.get("page", [""])[0] or ""
-        requested_page = _query_to_label.get(raw.lower())
+    try:
+        # Try new API first (Streamlit >= 1.28)
+        query_params = st.query_params
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", "") or ""
+            requested_page = _query_to_label.get(raw.lower())
+    except AttributeError:
+        # Fallback to deprecated API for older Streamlit versions
+        query_params = st.experimental_get_query_params()
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", [""])[0] or ""
+            requested_page = _query_to_label.get(raw.lower())
 
     default_index = 0
     if requested_page in sidebar_options:

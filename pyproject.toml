@@ -20,4 +20,3 @@ decisions-dashboard = "decisions.dashboard.app:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["decisions*"]
-exclude = ["dashboard*"]
