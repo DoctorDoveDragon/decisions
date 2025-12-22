@@ -17,8 +17,8 @@ _original_file = os.path.join(_current_dir, "3_🧠_Mechanical_Processes.py")
 try:
     # Use modern importlib approach (Python 3.4+)
     _spec = importlib.util.spec_from_file_location("_mechanical_processes_impl", _original_file)
-    if _spec is None or _spec.loader is None:
-        raise ImportError(f"Cannot load module spec from {_original_file}")
+    if _spec is None:
+        raise ImportError(f"Cannot create module spec from {_original_file}")
     
     _impl = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_impl)
