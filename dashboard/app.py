@@ -3,11 +3,7 @@ Main Dashboard with Navigation
 """
 
 import streamlit as st
-import sys
-import os
-
-# Add parent directory to path to import modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import traceback
 
 # Page configuration
 st.set_page_config(
@@ -393,12 +389,57 @@ def show_configuration_page():
             st.info("Settings will be applied after restart.")
 
 
-# --- Sidebar navigation and routing (after helper functions are defined) ---
-st.sidebar.title("🧭 Navigation")
+# --- Helper: robust import-and-run routine ---
+def _try_import_and_run(module_name):
+    """Try to import decisions.dashboard.pages.<module_name> and run its main().
 
-page = st.sidebar.radio(
-    "Go to",
-    [
+    Tries absolute import first (for installed package), then relative import (for
+    in-repo imports when running as a module). Returns a tuple (ran, error_text).
+    If ran is True, the module main() was called. If False, error_text contains
+    a combined traceback of the import attempts.
+    """
+    attempts = []
+
+    # Attempt absolute import (package installed or running as package)
+    try:
+        mod = __import__(f"decisions.dashboard.pages.{module_name}", fromlist=["*"])
+        if hasattr(mod, "main"):
+            mod.main()
+            return True, None
+        else:
+            attempts.append(f"Imported decisions.dashboard.pages.{module_name} but no main() found.")
+    except Exception:
+        attempts.append(traceback.format_exc())
+
+    # Attempt relative import (if this module is itself within a package)
+    try:
+        mod = __import__(f".pages.{module_name}", globals(), locals(), ["*"])
+        if hasattr(mod, "main"):
+            mod.main()
+            return True, None
+        else:
+            attempts.append(f"Imported .pages.{module_name} but no main() found.")
+    except Exception:
+        attempts.append(traceback.format_exc())
+
+    return False, "\n---\n".join(attempts)
+
+
+def main():
+    # --- Sidebar navigation and routing ---
+    st.sidebar.title("🧭 Navigation")
+
+    # Map query param values to sidebar labels
+    _query_to_label = {
+        "home": "🏠 Home",
+        "analysis": "🔍 Philosophical Analysis",
+        "mechanical_processes": "🔧 Mechanical Processes",
+        "comparative_engine": "📊 Comparative Engine",
+        "research_tools": "📚 Research Tools",
+        "configuration": "⚙️ Configuration",
+    }
+
+    sidebar_options = [
         "🏠 Home",
         "🔍 Philosophical Analysis", 
         "🔧 Mechanical Processes",
@@ -406,45 +447,53 @@ page = st.sidebar.radio(
         "📚 Research Tools",
         "⚙️ Configuration"
     ]
-)
 
-# Page routing
-if page == "🏠 Home":
-    # Import and run home page
-    try:
-        from dashboard.pages import home
-        home.main()
-    except Exception as e:
-        st.error(f"Home page module not found or failed to load: {e}")
-        st.info("Creating default home page...")
-        show_home_page()
+    # Determine desired default page from query params (if present)
+    query_params = st.experimental_get_query_params()
+    requested_page = None
+    if "page" in query_params:
+        raw = query_params.get("page", [""])[0] or ""
+        requested_page = _query_to_label.get(raw.lower())
+
+    default_index = 0
+    if requested_page in sidebar_options:
+        default_index = sidebar_options.index(requested_page)
+
+    page = st.sidebar.radio("Go to", sidebar_options, index=default_index)
+
+    # Page routing: try to import dashboard.pages.* modules first (package-aware),
+    # fallback to local implementations when imports are missing or fail.
+    if page == "🏠 Home":
+        ran, err = _try_import_and_run("home")
+        if not ran:
+            if err:
+                st.error("Home page module import failed; showing built-in home page. Details:\n" + err)
+            st.info("Creating default home page...")
+            show_home_page()
         
-elif page == "🔍 Philosophical Analysis":
-    try:
-        from dashboard.pages import analysis
-        analysis.main()
-    except Exception as e:
-        st.error(f"Analysis page module not found or failed to load: {e}")
-        show_analysis_page()
+    elif page == "🔍 Philosophical Analysis":
+        ran, err = _try_import_and_run("analysis")
+        if not ran:
+            if err:
+                st.error("Analysis page module import failed; showing built-in analysis page. Details:\n" + err)
+            show_analysis_page()
         
-elif page == "🔧 Mechanical Processes":
-    try:
-        from dashboard.pages import mechanical_processes
-        mechanical_processes.main()
-    except Exception as e:
-        st.error(f"Mechanical processes module not found or failed to load: {e}")
-        show_mechanical_processes_page()
+    elif page == "🔧 Mechanical Processes":
+        ran, err = _try_import_and_run("mechanical_processes")
+        if not ran:
+            if err:
+                st.error("Mechanical processes module import failed; showing built-in page. Details:\n" + err)
+            show_mechanical_processes_page()
         
-elif page == "📊 Comparative Engine":
-    show_comparative_engine_page()
-    
-elif page == "📚 Research Tools":
-    show_research_tools_page()
-    
-elif page == "⚙️ Configuration":
-    show_configuration_page()
+    elif page == "📊 Comparative Engine":
+        show_comparative_engine_page()
+        
+    elif page == "📚 Research Tools":
+        show_research_tools_page()
+        
+    elif page == "⚙️ Configuration":
+        show_configuration_page()
+
 
 if __name__ == "__main__":
-    # Running under "streamlit run dashboard/app.py" will execute this file.
-    # No forced rerun here to avoid infinite rerun loops.
-    pass
+    main()
