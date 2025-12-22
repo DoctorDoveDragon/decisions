@@ -19,6 +19,9 @@ def _load_page_module(name: str) -> ModuleType:
     """Import and cache a page module by name."""
     if name not in _PAGE_NAMES:
         raise AttributeError(f"module 'dashboard.pages' has no attribute '{name}'")
+    # Check if already cached
+    if name in globals():
+        return globals()[name]
     module = importlib.import_module(f"dashboard.pages.{name}")
     globals()[name] = module  # cache for future attribute access
     return module
