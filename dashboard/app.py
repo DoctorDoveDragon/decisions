@@ -1219,7 +1219,7 @@ def show_research_tools_page():
   author = {{{citation['author']}}},
   title = {{{citation['title']}}},
   journal = {{{citation['journal']}}},
-  year = {{{citation['year']}}
+  year = {{{citation['year']}}}
 }}"""
                 bibtex_entries.append(entry)
             
@@ -1314,7 +1314,7 @@ def show_research_tools_page():
         if st.button("Post Comment"):
             if comment:
                 st.success("Comment posted!")
-                # In a real app, this would be saved to a database
+                # In a real app, this would be saved to a database database
 
 
 def show_configuration_page():
