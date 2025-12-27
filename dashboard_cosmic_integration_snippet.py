@@ -1,18 +1,26 @@
 """
 Cosmic Theme Integration Snippet for dashboard/app.py
 
-Copy this code and add it to the TOP of dashboard/app.py
-(BEFORE the st.set_page_config call)
+Copy this code and add it to dashboard/app.py:
+- Add AFTER st.set_page_config call
+- Add BEFORE any other content rendering
 
 This is a safe, non-breaking integration that:
 - Only activates if cosmic_upgrade is available
 - Shows a toast notification when activated
 - Gracefully falls back if not available
 - Does not modify any existing functionality
+
+Integration Point in app.py:
+  1. Keep all existing imports at the top
+  2. Keep st.set_page_config as-is
+  3. Add this code AFTER st.set_page_config
+  4. Continue with your existing custom CSS and code
 """
 
 # ============================================================
 # Cosmic Theme Overlay (optional, non-breaking)
+# Add this AFTER st.set_page_config and existing imports
 # ============================================================
 try:
     from cosmic_upgrade.upgrade import upgrade_existing_dashboard
@@ -22,7 +30,6 @@ try:
     
     # Show success notification if cosmic mode is active
     if cosmic_active:
-        import streamlit as st
         st.toast("🌌 Cosmic mode activated!", icon="✨")
         
 except ImportError:
@@ -30,7 +37,6 @@ except ImportError:
     pass
 except Exception as e:
     # Any other error, log and continue normally
-    import streamlit as st
     st.sidebar.info(f"Cosmic theme not activated: {e}")
 # ============================================================
 # End of Cosmic Theme Integration
@@ -38,4 +44,4 @@ except Exception as e:
 
 
 # Your existing dashboard code continues below...
-# (st.set_page_config and other imports)
+# (Custom CSS, classes, functions, etc.)

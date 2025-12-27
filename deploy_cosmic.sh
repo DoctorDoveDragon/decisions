@@ -133,8 +133,8 @@ echo "================================================"
 echo ""
 echo "📝 Integration Instructions:"
 echo ""
-echo "To activate the cosmic theme, add the following lines to the TOP of dashboard/app.py"
-echo "(BEFORE st.set_page_config):"
+echo "To activate the cosmic theme, add the following lines to dashboard/app.py"
+echo "AFTER st.set_page_config() and existing imports:"
 echo ""
 echo "---------------------------------------------------"
 cat << 'EOF'
@@ -142,21 +142,20 @@ cat << 'EOF'
 try:
     from cosmic_upgrade.upgrade import upgrade_existing_dashboard
     if upgrade_existing_dashboard():
-        import streamlit as st
         st.toast("🌌 Cosmic mode activated!", icon="✨")
 except ImportError:
     pass  # Cosmic upgrade not available, continue normally
 EOF
 echo "---------------------------------------------------"
 echo ""
-echo "Or copy the integration snippet from:"
+echo "Or copy the full integration snippet from:"
 echo "  dashboard_cosmic_integration_snippet.py"
 echo ""
 echo "Then run:"
 echo "  streamlit run dashboard/app.py"
 echo ""
 echo "To verify deployment, you can run:"
-echo "  python3 -c 'from cosmic_upgrade.verify import verify_deployment; verify_deployment()'"
+echo "  streamlit run cosmic_upgrade/verify.py"
 echo ""
-echo "Or integrate it into a Streamlit page/route."
+echo "Or integrate verify_deployment() into a Streamlit page/route."
 echo ""
