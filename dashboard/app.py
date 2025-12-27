@@ -1631,18 +1631,6 @@ def show_configuration_page():
 
 
 # --- Helper: robust import-and-run routine ---
-
-def _try_import_and_run(module_name):
-    """Try to import decisions.dashboard.pages.<module_name> and run its main().
-
-    Tries absolute import first (for installed package), then relative import (for
-    in-repo imports when running as a module). Returns a tuple (ran, error_text).
-    If ran is True, the module main() was called. If False, error_text contains
-    a combined traceback of the import attempts.
-    """
-    attempts = []
-
-# --- Helper: robust import-and-run routine ---
 def _try_import_and_run(module_name):
     """Try to import decisions.dashboard.pages.<module_name> and run its main().
 
@@ -1674,60 +1662,6 @@ def _try_import_and_run(module_name):
             attempts.append(f"Imported .pages.{module_name} but no main() found.")
     except Exception:
         attempts.append(traceback.format_exc())
-
-    return False, "\n---\n".join(attempts)
-
-
-def main():
-    # --- Sidebar navigation and routing ---
-    st.sidebar.title("🧭 Navigation")
-
-# Query parameter handling: read ?page= from URL
-query_params = st.experimental_get_query_params()
-query_page = query_params.get("page", [None])[0]
-
-# Map query parameter values to display names
-query_to_page_map = {
-    "home": "🏠 Home",
-    "analysis": "🔍 Philosophical Analysis",
-    "mechanical_processes": "🔧 Mechanical Processes",
-    "comparative_engine": "📊 Comparative Engine",
-    "research_tools": "📚 Research Tools",
-    "configuration": "⚙️ Configuration"
-}
-
-# Available page options
-page_options = [
-    "🏠 Home",
-    "🔍 Philosophical Analysis", 
-    "🔧 Mechanical Processes",
-    "📊 Comparative Engine",
-    "📚 Research Tools",
-    "⚙️ Configuration"
-]
-
-# Determine initial page index based on query parameter
-default_index = 0
-if query_page and query_page in query_to_page_map:
-    selected_page = query_to_page_map[query_page]
-    if selected_page in page_options:
-        default_index = page_options.index(selected_page)
-
-page = st.sidebar.radio(
-    "Go to",
-    page_options,
-    index=default_index
-)
-    # Map query param values to sidebar labels
-    _query_to_label = {
-        "home": "🏠 Home",
-        "analysis": "🔍 Philosophical Analysis",
-        "mechanical_processes": "🔧 Mechanical Processes",
-        "comparative_engine": "📊 Comparative Engine",
-        "research_tools": "📚 Research Tools",
-        "configuration": "⚙️ Configuration",
-    }
-
 
     return False, "\n---\n".join(attempts)
 
@@ -1770,11 +1704,6 @@ def main():
         if "page" in query_params:
             raw = query_params.get("page", [""])[0] or ""
             requested_page = _query_to_label.get(raw.lower())
-    query_params = st.experimental_get_query_params()
-    requested_page = None
-    if "page" in query_params:
-        raw = query_params.get("page", [""])[0] or ""
-        requested_page = _query_to_label.get(raw.lower())
 
     default_index = 0
     if requested_page in sidebar_options:
