@@ -160,14 +160,18 @@ class PageLoader:
             return st.session_state.module_cache[cache_key]
         
         module_paths = [
-            # 1. Try as installed package
+            # 1. Try frontend directory first (new location)
+            f"dashboard.frontend.{page_name}",
+            # 2. Try as installed package
             f"decisions.dashboard.pages.{page_name}",
-            # 2. Try relative import from current location
+            # 3. Try relative import from current location
             f".pages.{page_name}",
-            # 3. Try direct path (for development)
+            # 4. Try direct path (for development)
             f"pages.{page_name}",
-            # 4. Try absolute path from repository root
+            # 5. Try absolute path from repository root
             f"dashboard.pages.{page_name}",
+            # 6. Try frontend from current location
+            f"frontend.{page_name}",
         ]
         
         for module_path in module_paths:
@@ -1859,11 +1863,19 @@ def main():
                 page_info['function']
             )
         else:
-            # For home page, try to load external module
-            ran, err = PageLoader.load_page_module('home')
-            if ran and hasattr(ran, 'main'):
-                ran.main()
+            # For home page, try to load external module with run() wrapper
+            module = PageLoader.load_page_module('home')
+            if module and hasattr(module, 'run'):
+                # Call run() which returns (ran, err) tuple
+                ran, err = module.run()
+                if not ran and err:
+                    st.error(f"Home page module failed: {err}")
+                    show_home_page()
+            elif module and hasattr(module, 'main'):
+                # Fallback to main() if run() doesn't exist
+                module.main()
             else:
+                # Fallback to built-in home page
                 show_home_page()
     else:
         # Default to home page
