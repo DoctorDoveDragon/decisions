@@ -16,6 +16,10 @@ dependencies = [
 ]
 
 [project.scripts]
+decisions-dashboard = "decisions.cli:launch"
+
+[tool.setuptools.packages.find]
+where = ["."]
 decisions-dashboard = "decisions.dashboard.app:main"
 
 [tool.setuptools.packages.find]

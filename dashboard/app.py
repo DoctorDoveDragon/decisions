@@ -3,6 +3,7 @@ Main Dashboard with Navigation - Enhanced Version
 """
 
 import streamlit as st
+import os
 import traceback
 
 # Page configuration
@@ -1636,6 +1637,17 @@ def _try_import_and_run(module_name):
     """
     attempts = []
 
+# --- Helper: robust import-and-run routine ---
+def _try_import_and_run(module_name):
+    """Try to import decisions.dashboard.pages.<module_name> and run its main().
+
+    Tries absolute import first (for installed package), then relative import (for
+    in-repo imports when running as a module). Returns a tuple (ran, error_text).
+    If ran is True, the module main() was called. If False, error_text contains
+    a combined traceback of the import attempts.
+    """
+    attempts = []
+
     # Attempt absolute import (package installed or running as package)
     try:
         mod = __import__(f"decisions.dashboard.pages.{module_name}", fromlist=["*"])
@@ -1675,6 +1687,24 @@ def main():
         "configuration": "⚙️ Configuration",
     }
 
+
+    return False, "\n---\n".join(attempts)
+
+
+def main():
+    # --- Sidebar navigation and routing ---
+    st.sidebar.title("🧭 Navigation")
+
+    # Map query param values to sidebar labels
+    _query_to_label = {
+        "home": "🏠 Home",
+        "analysis": "🔍 Philosophical Analysis",
+        "mechanical_processes": "🔧 Mechanical Processes",
+        "comparative_engine": "📊 Comparative Engine",
+        "research_tools": "📚 Research Tools",
+        "configuration": "⚙️ Configuration",
+    }
+
     sidebar_options = [
         "🏠 Home",
         "🔍 Philosophical Analysis",
@@ -1685,6 +1715,20 @@ def main():
     ]
 
     # Determine desired default page from query params (if present)
+    try:
+        # Try new API first (Streamlit >= 1.28)
+        query_params = st.query_params
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", "") or ""
+            requested_page = _query_to_label.get(raw.lower())
+    except AttributeError:
+        # Fallback to deprecated API for older Streamlit versions
+        query_params = st.experimental_get_query_params()
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", [""])[0] or ""
+            requested_page = _query_to_label.get(raw.lower())
     query_params = st.experimental_get_query_params()
     requested_page = None
     if "page" in query_params:
