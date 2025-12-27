@@ -1631,8 +1631,6 @@ def show_configuration_page():
 
 
 # --- Helper: robust import-and-run routine ---
-
-# --- Helper: robust import-and-run routine ---
 def _try_import_and_run(module_name):
     """Try to import decisions.dashboard.pages.<module_name> and run its main().
 
@@ -1746,6 +1744,8 @@ def main():
 
     elif page == "⚙️ Configuration":
         show_configuration_page()
+
+
 class NavigationManager:
     """Manages page navigation and routing"""
     
