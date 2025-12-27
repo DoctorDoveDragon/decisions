@@ -1649,8 +1649,9 @@ def _try_import_and_run(module_name):
     try:
         mod = __import__(f"decisions.dashboard.pages.{module_name}", fromlist=["*"])
         if hasattr(mod, "main"):
-            mod.main()
-            return True, None
+            result = mod.main()
+            # If main() returns a tuple, use it; otherwise return success
+            return result if isinstance(result, tuple) and len(result) == 2 else (True, None)
         else:
             attempts.append(f"Imported decisions.dashboard.pages.{module_name} but no main() found.")
     except Exception:
@@ -1660,8 +1661,9 @@ def _try_import_and_run(module_name):
     try:
         mod = __import__(f".pages.{module_name}", globals(), locals(), ["*"])
         if hasattr(mod, "main"):
-            mod.main()
-            return True, None
+            result = mod.main()
+            # If main() returns a tuple, use it; otherwise return success
+            return result if isinstance(result, tuple) and len(result) == 2 else (True, None)
         else:
             attempts.append(f"Imported .pages.{module_name} but no main() found.")
     except Exception:
@@ -1876,6 +1878,11 @@ def main():
                 module.main()
             else:
                 # Fallback to built-in home page
+            # For home page, try to load external module
+            ran, err = _try_import_and_run('home')
+            if not ran:
+                if err:
+                    st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
                 show_home_page()
     else:
         # Default to home page

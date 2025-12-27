@@ -3,6 +3,7 @@ Home Page Module
 """
 
 import streamlit as st
+import traceback
 
 def main():
     st.markdown('<h1 class="main-header">🧠 Comparative Decision Intelligence Platform</h1>', unsafe_allow_html=True)
@@ -158,5 +159,21 @@ def main():
     df = pd.DataFrame(features[1:], columns=features[0])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
+    # Explicit success return expected by PageLoader
+    return True, None
+
+
+def run():
+    """Wrapper that always returns (ran: bool, err: Optional[str])"""
+    try:
+        res = main()
+        if isinstance(res, tuple) and len(res) == 2:
+            return res
+        return True, None
+    except Exception:
+        return False, traceback.format_exc()
+
+
 if __name__ == "__main__":
+    # When run directly, call main() (we ignore the return value here)
     main()
