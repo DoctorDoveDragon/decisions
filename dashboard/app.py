@@ -4,6 +4,11 @@ Main Dashboard with Navigation - Enhanced Version
 
 import streamlit as st
 import os
+
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 import traceback
 
 # Page configuration
@@ -1677,6 +1682,42 @@ def main():
     # --- Sidebar navigation and routing ---
     st.sidebar.title("🧭 Navigation")
 
+# Query parameter handling: read ?page= from URL
+query_params = st.experimental_get_query_params()
+query_page = query_params.get("page", [None])[0]
+
+# Map query parameter values to display names
+query_to_page_map = {
+    "home": "🏠 Home",
+    "analysis": "🔍 Philosophical Analysis",
+    "mechanical_processes": "🔧 Mechanical Processes",
+    "comparative_engine": "📊 Comparative Engine",
+    "research_tools": "📚 Research Tools",
+    "configuration": "⚙️ Configuration"
+}
+
+# Available page options
+page_options = [
+    "🏠 Home",
+    "🔍 Philosophical Analysis", 
+    "🔧 Mechanical Processes",
+    "📊 Comparative Engine",
+    "📚 Research Tools",
+    "⚙️ Configuration"
+]
+
+# Determine initial page index based on query parameter
+default_index = 0
+if query_page and query_page in query_to_page_map:
+    selected_page = query_to_page_map[query_page]
+    if selected_page in page_options:
+        default_index = page_options.index(selected_page)
+
+page = st.sidebar.radio(
+    "Go to",
+    page_options,
+    index=default_index
+)
     # Map query param values to sidebar labels
     _query_to_label = {
         "home": "🏠 Home",
