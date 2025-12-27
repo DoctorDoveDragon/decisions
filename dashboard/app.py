@@ -1860,10 +1860,10 @@ def main():
             )
         else:
             # For home page, try to load external module
-            ran, err = PageLoader.load_page_module('home')
-            if ran and hasattr(ran, 'main'):
-                ran.main()
-            else:
+            ran, err = _try_import_and_run('home')
+            if not ran:
+                if err:
+                    st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
                 show_home_page()
     else:
         # Default to home page
