@@ -1,4 +1,4 @@
-"""
+import traceback""
 Main Dashboard with Navigation - Enhanced Version
 """
 
