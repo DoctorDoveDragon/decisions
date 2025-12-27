@@ -4,10 +4,9 @@ Home Page Module
 
 import streamlit as st
 import traceback
-import pandas as pd
 
 def main():
-    st.markdown('<h1>🧠 Comparative Decision Intelligence Platform</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🧠 Comparative Decision Intelligence Platform</h1>', unsafe_allow_html=True)
     
     st.markdown("""
     ## 🎯 Integrated Understanding System
@@ -30,12 +29,21 @@ def main():
         <li>Buddhist mindfulness</li>
         <li>Comparative insights</li>
         </ul>
+        
+        <p><b>Features:</b></p>
+        <ul>
+        <li>✓ Virtue alignment scoring</li>
+        <li>✓ Control analysis</li>
+        <li>✓ Cross-tradition comparison</li>
+        <li>✓ Academic citations</li>
+        </ul>
         </div>
         """, unsafe_allow_html=True)
         
         if st.button("Go to Philosophical Analysis →", key="phil_btn_home"):
             # Use query params for navigation (consistent with app router)
             st.query_params.page = "analysis"
+            st.experimental_set_query_params(page="analysis")
     
     with col2:
         st.markdown("""
@@ -49,12 +57,21 @@ def main():
         <li><b>Culture</b> - Societal interpretation</li>
         <li><b>Utility</b> - Practical application</li>
         </ol>
+        
+        <p><b>Example processes:</b></p>
+        <ul>
+        <li>Entropy</li>
+        <li>Diffusion</li>
+        <li>Oscillation</li>
+        <li>Catalysis</li>
+        </ul>
         </div>
         """, unsafe_allow_html=True)
         
         if st.button("Go to Mechanical Processes →", key="mech_btn_home"):
             # Use query params for navigation (consistent with app router)
             st.query_params.page = "mechanical_processes"
+            st.experimental_set_query_params(page="mechanical_processes")
     
     st.divider()
     
@@ -67,13 +84,13 @@ def main():
         st.markdown("""
         <div class="card">
         <h4>1. Start the platform:</h4>
-        <pre>
-# Terminal 1 - API server
-python -m api.server
-
-# Terminal 2 - Dashboard
-streamlit run dashboard/app.py
-        </pre>
+        ```bash
+        # Terminal 1 - API server
+        python -m api.server
+        
+        # Terminal 2 - Dashboard
+        streamlit run dashboard/app.py
+        ```
         </div>
         """, unsafe_allow_html=True)
     
@@ -81,9 +98,9 @@ streamlit run dashboard/app.py
         st.markdown("""
         <div class="card">
         <h4>2. Or use the launcher:</h4>
-        <pre>
-./start.sh  # Starts everything
-        </pre>
+        ```bash
+        ./start.sh  # Starts everything
+        ```
         
         <h4>3. Open in browser:</h4>
         <ul>
@@ -138,6 +155,7 @@ streamlit run dashboard/app.py
         ["Visualization", "✅", "✅"]
     ]
     
+    import pandas as pd
     df = pd.DataFrame(features[1:], columns=features[0])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
