@@ -4,6 +4,8 @@ Main Dashboard with Navigation - Enhanced Version
 
 import streamlit as st
 import traceback
+
+# Page configuration
 import sys
 from pathlib import Path
 
@@ -554,6 +556,7 @@ def show_analysis_page():
                 st.divider()
 
 
+
 def show_mechanical_processes_page():
     """Enhanced mechanical processes page with interactive examples"""
     
@@ -734,6 +737,7 @@ def show_mechanical_processes_page():
                             <div style="width: {width2}%; background: #10B981;"></div>
                         </div>
                         """, unsafe_allow_html=True)
+
 
 
 def show_comparative_engine_page():
@@ -1008,6 +1012,7 @@ def show_comparative_engine_page():
                     "High" if sensitivity_factor < 1.2 else "Moderate",
                     delta="Stable" if sensitivity_factor < 1.2 else "Variable"
                 )
+
 
 
 def show_research_tools_page():
@@ -1317,6 +1322,7 @@ def show_research_tools_page():
                 # In a real app, this would be saved to a database database
 
 
+
 def show_configuration_page():
     """Enhanced configuration page with persistence"""
     
@@ -1618,6 +1624,112 @@ def show_configuration_page():
             )
 
 
+# --- Helper: robust import-and-run routine ---
+
+def _try_import_and_run(module_name):
+    """Try to import decisions.dashboard.pages.<module_name> and run its main().
+
+    Tries absolute import first (for installed package), then relative import (for
+    in-repo imports when running as a module). Returns a tuple (ran, error_text).
+    If ran is True, the module main() was called. If False, error_text contains
+    a combined traceback of the import attempts.
+    """
+    attempts = []
+
+    # Attempt absolute import (package installed or running as package)
+    try:
+        mod = __import__(f"decisions.dashboard.pages.{module_name}", fromlist=["*"])
+        if hasattr(mod, "main"):
+            mod.main()
+            return True, None
+        else:
+            attempts.append(f"Imported decisions.dashboard.pages.{module_name} but no main() found.")
+    except Exception:
+        attempts.append(traceback.format_exc())
+
+    # Attempt relative import (if this module is itself within a package)
+    try:
+        mod = __import__(f".pages.{module_name}", globals(), locals(), ["*"])
+        if hasattr(mod, "main"):
+            mod.main()
+            return True, None
+        else:
+            attempts.append(f"Imported .pages.{module_name} but no main() found.")
+    except Exception:
+        attempts.append(traceback.format_exc())
+
+    return False, "\n---\n".join(attempts)
+
+
+def main():
+    # --- Sidebar navigation and routing ---
+    st.sidebar.title("🧭 Navigation")
+
+    # Map query param values to sidebar labels
+    _query_to_label = {
+        "home": "🏠 Home",
+        "analysis": "🔍 Philosophical Analysis",
+        "mechanical_processes": "🔧 Mechanical Processes",
+        "comparative_engine": "📊 Comparative Engine",
+        "research_tools": "📚 Research Tools",
+        "configuration": "⚙️ Configuration",
+    }
+
+    sidebar_options = [
+        "🏠 Home",
+        "🔍 Philosophical Analysis",
+        "🔧 Mechanical Processes",
+        "📊 Comparative Engine",
+        "📚 Research Tools",
+        "⚙️ Configuration"
+    ]
+
+    # Determine desired default page from query params (if present)
+    query_params = st.experimental_get_query_params()
+    requested_page = None
+    if "page" in query_params:
+        raw = query_params.get("page", [""])[0] or ""
+        requested_page = _query_to_label.get(raw.lower())
+
+    default_index = 0
+    if requested_page in sidebar_options:
+        default_index = sidebar_options.index(requested_page)
+
+    page = st.sidebar.radio("Go to", sidebar_options, index=default_index)
+
+    # Page routing: try to import dashboard.pages.* modules first (package-aware),
+    # fallback to local implementations when imports are missing or fail.
+    if page == "🏠 Home":
+        ran, err = _try_import_and_run("home")
+        if not ran:
+            if err:
+                st.error("Home page module import failed; showing built-in home page. Details:\n" + err)
+            st.info("Creating default home page...")
+            show_home_page()
+
+    elif page == "🔍 Philosophical Analysis":
+        ran, err = _try_import_and_run("analysis")
+        if not ran:
+            if err:
+                st.error("Analysis page module import failed; showing built-in analysis page. Details:\n" + err)
+            show_analysis_page()
+
+    elif page == "🔧 Mechanical Processes":
+        ran, err = _try_import_and_run("mechanical_processes")
+        if not ran:
+            if err:
+                st.error("Mechanical processes module import failed; showing built-in page. Details:\n" + err)
+            show_mechanical_processes_page()
+
+    elif page == "📊 Comparative Engine":
+        # Comparative engine handled locally in this file
+        show_comparative_engine_page()
+
+    elif page == "📚 Research Tools":
+        show_research_tools_page()
+
+    elif page == "⚙️ Configuration":
+        show_configuration_page()
 class NavigationManager:
     """Manages page navigation and routing"""
     

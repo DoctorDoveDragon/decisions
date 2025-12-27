@@ -1,3 +1,9 @@
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
 # Cosmic theme backup files
 dashboard/app_backup_*.py
 

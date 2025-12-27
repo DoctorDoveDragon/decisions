@@ -17,3 +17,6 @@ dependencies = [
 
 [project.scripts]
 decisions-dashboard = "decisions.dashboard.app:main"
+
+[tool.setuptools.packages.find]
+include = ["decisions*"]
