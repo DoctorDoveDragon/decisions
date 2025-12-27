@@ -1645,8 +1645,9 @@ def _try_import_and_run(module_name):
     try:
         mod = __import__(f"decisions.dashboard.pages.{module_name}", fromlist=["*"])
         if hasattr(mod, "main"):
-            mod.main()
-            return True, None
+            result = mod.main()
+            # If main() returns a tuple, use it; otherwise return success
+            return result if isinstance(result, tuple) and len(result) == 2 else (True, None)
         else:
             attempts.append(f"Imported decisions.dashboard.pages.{module_name} but no main() found.")
     except Exception:
@@ -1656,8 +1657,9 @@ def _try_import_and_run(module_name):
     try:
         mod = __import__(f".pages.{module_name}", globals(), locals(), ["*"])
         if hasattr(mod, "main"):
-            mod.main()
-            return True, None
+            result = mod.main()
+            # If main() returns a tuple, use it; otherwise return success
+            return result if isinstance(result, tuple) and len(result) == 2 else (True, None)
         else:
             attempts.append(f"Imported .pages.{module_name} but no main() found.")
     except Exception:
