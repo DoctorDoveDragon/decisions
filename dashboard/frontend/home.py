@@ -4,6 +4,7 @@ Home Page Module
 
 import streamlit as st
 import traceback
+import pandas as pd
 
 def main():
     st.markdown('<h1>🧠 Comparative Decision Intelligence Platform</h1>', unsafe_allow_html=True)
@@ -35,7 +36,6 @@ def main():
         if st.button("Go to Philosophical Analysis →", key="phil_btn_home"):
             # Use query params for navigation (consistent with app router)
             st.query_params.page = "analysis"
-            st.experimental_set_query_params(page="analysis")
     
     with col2:
         st.markdown("""
@@ -55,7 +55,6 @@ def main():
         if st.button("Go to Mechanical Processes →", key="mech_btn_home"):
             # Use query params for navigation (consistent with app router)
             st.query_params.page = "mechanical_processes"
-            st.experimental_set_query_params(page="mechanical_processes")
     
     st.divider()
     
@@ -139,7 +138,6 @@ streamlit run dashboard/app.py
         ["Visualization", "✅", "✅"]
     ]
     
-    import pandas as pd
     df = pd.DataFrame(features[1:], columns=features[0])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
