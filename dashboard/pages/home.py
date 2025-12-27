@@ -40,8 +40,9 @@ def main():
         """, unsafe_allow_html=True)
         
         if st.button("Go to Philosophical Analysis →", key="phil_btn_home"):
-            st.session_state.page = "analysis"
-            st.rerun()
+            # Use query params for navigation (consistent with app router)
+            st.query_params.page = "analysis"
+            st.experimental_set_query_params(page="analysis")
     
     with col2:
         st.markdown("""
@@ -67,8 +68,9 @@ def main():
         """, unsafe_allow_html=True)
         
         if st.button("Go to Mechanical Processes →", key="mech_btn_home"):
-            st.session_state.page = "mechanical_processes"
-            st.rerun()
+            # Use query params for navigation (consistent with app router)
+            st.query_params.page = "mechanical_processes"
+            st.experimental_set_query_params(page="mechanical_processes")
     
     st.divider()
     
