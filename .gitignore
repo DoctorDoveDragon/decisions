@@ -1,2 +1,28 @@
 *.egg-info/
 __pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+# Cosmic theme backup files
+dashboard/app_backup_*.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
