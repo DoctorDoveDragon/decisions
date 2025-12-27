@@ -1,7 +1,8 @@
-import traceback""
+"""
 Main Dashboard with Navigation - Enhanced Version
 """
 
+import traceback
 import streamlit as st
 import os
 import sys
@@ -10,26 +11,12 @@ import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
-import traceback
 
 # Page configuration
 from pathlib import Path
 
-# Page configuration with optimized settings
-st.set_page_config(
-    page_title="Comparative Decision Intelligence",
-    page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://github.com/DoctorDoveDragon/decisions/discussions',
-        'Report a bug': 'https://github.com/DoctorDoveDragon/decisions/issues',
-        'About': "## Comparative Decision Intelligence Platform\nCombining philosophical wisdom with mechanical process analysis"
-    }
-)
-
-# Custom CSS with performance optimizations
-st.markdown("""
+# Application CSS - wrapped in a triple-quoted string to prevent Python syntax errors
+APP_CSS = """
 <style>
     /* Base styles with CSS variables for maintainability */
     :root {
@@ -118,7 +105,23 @@ st.markdown("""
         }
     }
 </style>
-""", unsafe_allow_html=True)
+"""
+
+# Page configuration with optimized settings
+st.set_page_config(
+    page_title="Comparative Decision Intelligence",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/DoctorDoveDragon/decisions/discussions',
+        'Report a bug': 'https://github.com/DoctorDoveDragon/decisions/issues',
+        'About': "## Comparative Decision Intelligence Platform\nCombining philosophical wisdom with mechanical process analysis"
+    }
+)
+
+# Inject custom CSS with performance optimizations
+st.markdown(APP_CSS, unsafe_allow_html=True)
 
 
 class DashboardState:
@@ -1878,12 +1881,11 @@ def main():
                 module.main()
             else:
                 # Fallback to built-in home page
-            # For home page, try to load external module
-            ran, err = _try_import_and_run('home')
-            if not ran:
-                if err:
-                    st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
-                show_home_page()
+                ran, err = _try_import_and_run('home')
+                if not ran:
+                    if err:
+                        st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
+                    show_home_page()
     else:
         # Default to home page
         st.session_state.page = 'home'
