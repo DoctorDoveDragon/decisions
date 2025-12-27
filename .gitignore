@@ -165,12 +165,18 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Environment variables
 # Environment
 .env
 .env.local
 
 # Streamlit
 .streamlit/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
 # Streamlit
 .streamlit/
 
