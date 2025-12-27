@@ -15,8 +15,7 @@ if parent_dir not in sys.path:
 # Page configuration
 from pathlib import Path
 
-# Application CSS - defined as string literal to separate CSS from Python code
-# This prevents Python from parsing CSS syntax (like '--card-shadow: 0 4px...') as code
+# Application CSS - extracted as a separate variable for better code organization and readability
 APP_CSS = """
 <style>
     /* Base styles with CSS variables for maintainability */
@@ -121,7 +120,7 @@ st.set_page_config(
     }
 )
 
-# Apply custom CSS styling to the application
+# Apply custom CSS styling (unsafe_allow_html required for style injection)
 st.markdown(APP_CSS, unsafe_allow_html=True)
 
 
