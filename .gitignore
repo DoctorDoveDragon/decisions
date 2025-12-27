@@ -25,6 +25,12 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 *.egg-info/
 .installed.cfg
 *.egg
@@ -33,6 +39,9 @@ wheels/
 venv/
 ENV/
 env/
+.venv
+
+# IDEs
 
 # IDEs
 pip-wheel-metadata/
@@ -160,6 +169,10 @@ ENV/
 *.swp
 *.swo
 *~
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # OS
 .DS_Store
