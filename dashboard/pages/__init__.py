@@ -36,3 +36,9 @@ def __dir__() -> list:
 def get_page(name: str) -> ModuleType:
     """Programmatic helper to import a page module."""
     return _load_page_module(name)
+# Note: We don't import mechanical_processes here to avoid loading its heavy dependencies
+# It will be imported on-demand when needed
+from . import home
+from . import analysis
+
+__all__ = ["home", "analysis"]
