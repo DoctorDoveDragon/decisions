@@ -1666,6 +1666,86 @@ def _try_import_and_run(module_name):
     return False, "\n---\n".join(attempts)
 
 
+def main():
+    # --- Sidebar navigation and routing ---
+    st.sidebar.title("🧭 Navigation")
+
+    # Map query param values to sidebar labels
+    _query_to_label = {
+        "home": "🏠 Home",
+        "analysis": "🔍 Philosophical Analysis",
+        "mechanical_processes": "🔧 Mechanical Processes",
+        "comparative_engine": "📊 Comparative Engine",
+        "research_tools": "📚 Research Tools",
+        "configuration": "⚙️ Configuration",
+    }
+
+    sidebar_options = [
+        "🏠 Home",
+        "🔍 Philosophical Analysis",
+        "🔧 Mechanical Processes",
+        "📊 Comparative Engine",
+        "📚 Research Tools",
+        "⚙️ Configuration"
+    ]
+
+    # Determine desired default page from query params (if present)
+    try:
+        # Try new API first (Streamlit >= 1.28)
+        query_params = st.query_params
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", "") or ""
+            requested_page = _query_to_label.get(raw.lower())
+    except AttributeError:
+        # Fallback to deprecated API for older Streamlit versions
+        query_params = st.experimental_get_query_params()
+        requested_page = None
+        if "page" in query_params:
+            raw = query_params.get("page", [""])[0] or ""
+            requested_page = _query_to_label.get(raw.lower())
+
+    default_index = 0
+    if requested_page in sidebar_options:
+        default_index = sidebar_options.index(requested_page)
+
+    page = st.sidebar.radio("Go to", sidebar_options, index=default_index)
+
+    # Page routing: try to import dashboard.pages.* modules first (package-aware),
+    # fallback to local implementations when imports are missing or fail.
+    if page == "🏠 Home":
+        ran, err = _try_import_and_run("home")
+        if not ran:
+            if err:
+                st.error("Home page module import failed; showing built-in home page. Details:\n" + err)
+            st.info("Creating default home page...")
+            show_home_page()
+
+    elif page == "🔍 Philosophical Analysis":
+        ran, err = _try_import_and_run("analysis")
+        if not ran:
+            if err:
+                st.error("Analysis page module import failed; showing built-in analysis page. Details:\n" + err)
+            show_analysis_page()
+
+    elif page == "🔧 Mechanical Processes":
+        ran, err = _try_import_and_run("mechanical_processes")
+        if not ran:
+            if err:
+                st.error("Mechanical processes module import failed; showing built-in page. Details:\n" + err)
+            show_mechanical_processes_page()
+
+    elif page == "📊 Comparative Engine":
+        # Comparative engine handled locally in this file
+        show_comparative_engine_page()
+
+    elif page == "📚 Research Tools":
+        show_research_tools_page()
+
+    elif page == "⚙️ Configuration":
+        show_configuration_page()
+
+
 class NavigationManager:
     """Manages page navigation and routing"""
     
