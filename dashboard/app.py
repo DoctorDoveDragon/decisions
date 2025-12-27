@@ -1632,16 +1632,6 @@ def show_configuration_page():
 
 # --- Helper: robust import-and-run routine ---
 
-def _try_import_and_run(module_name):
-    """Try to import decisions.dashboard.pages.<module_name> and run its main().
-
-    Tries absolute import first (for installed package), then relative import (for
-    in-repo imports when running as a module). Returns a tuple (ran, error_text).
-    If ran is True, the module main() was called. If False, error_text contains
-    a combined traceback of the import attempts.
-    """
-    attempts = []
-
 # --- Helper: robust import-and-run routine ---
 def _try_import_and_run(module_name):
     """Try to import decisions.dashboard.pages.<module_name> and run its main().
@@ -1716,11 +1706,6 @@ def main():
         if "page" in query_params:
             raw = query_params.get("page", [""])[0] or ""
             requested_page = _query_to_label.get(raw.lower())
-    query_params = st.experimental_get_query_params()
-    requested_page = None
-    if "page" in query_params:
-        raw = query_params.get("page", [""])[0] or ""
-        requested_page = _query_to_label.get(raw.lower())
 
     default_index = 0
     if requested_page in sidebar_options:
