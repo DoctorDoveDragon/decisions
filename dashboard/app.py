@@ -4,6 +4,7 @@ Main Dashboard with Navigation - Enhanced Version
 
 import streamlit as st
 import os
+import sys
 
 # Add parent directory to path to import modules (only if not already present)
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,7 +13,6 @@ if parent_dir not in sys.path:
 import traceback
 
 # Page configuration
-import sys
 from pathlib import Path
 
 # Page configuration with optimized settings
