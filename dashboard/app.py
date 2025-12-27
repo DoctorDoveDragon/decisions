@@ -1744,6 +1744,8 @@ def main():
 
     elif page == "⚙️ Configuration":
         show_configuration_page()
+
+
 class NavigationManager:
     """Manages page navigation and routing"""
     
