@@ -1,4 +1,16 @@
 """
+Main Dashboard with Navigation - Enhanced Version
+"""
+
+import traceback
+import streamlit as st
+import os
+import sys
+
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
@@ -18,6 +30,7 @@ from typing import Optional, Tuple
 
 import streamlit as st
 
+# Application CSS - extracted as a separate variable for better code organization and readability
 # ----------------------------
 # Page config and CSS injection
 # ----------------------------
@@ -57,6 +70,48 @@ APP_CSS = """
 /* Add any additional CSS from your original file here */
 </style>
 """
+
+# Page configuration with optimized settings
+st.set_page_config(
+    page_title="Comparative Decision Intelligence",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/DoctorDoveDragon/decisions/discussions',
+        'Report a bug': 'https://github.com/DoctorDoveDragon/decisions/issues',
+        'About': "## Comparative Decision Intelligence Platform\nCombining philosophical wisdom with mechanical process analysis"
+    }
+)
+
+# Apply custom CSS styling (unsafe_allow_html required for style injection)
+st.markdown(APP_CSS, unsafe_allow_html=True)
+
+
+class DashboardState:
+    """Centralized state management for the dashboard"""
+    
+    @staticmethod
+    def initialize():
+        """Initialize all session state variables"""
+        if 'page' not in st.session_state:
+            st.session_state.page = 'home'
+        
+        if 'last_error' not in st.session_state:
+            st.session_state.last_error = None
+        
+        if 'module_cache' not in st.session_state:
+            st.session_state.module_cache = {}
+        
+        if 'api_connected' not in st.session_state:
+            st.session_state.api_connected = False
+        
+        if 'config' not in st.session_state:
+            st.session_state.config = {
+                'theme': 'light',
+                'auto_refresh': False,
+                'default_tradition': 'stoic'
+            }
 
 # Inject CSS into Streamlit
 st.markdown(APP_CSS, unsafe_allow_html=True)
@@ -221,6 +276,12 @@ else:
                     else:
                         ran, err = True, None
             else:
+                # Fallback to built-in home page
+                ran, err = _try_import_and_run('home')
+                if not ran:
+                    if err:
+                        st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
+                    show_home_page()
                 ran, err = False, "Loaded home module has no run() or main() entrypoint"
         else:
             # loader_result is None or unexpected; try fallback import routine
