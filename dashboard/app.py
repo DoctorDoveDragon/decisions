@@ -1,17 +1,6 @@
 """
 Main Dashboard with Navigation - Enhanced Version
 
-import traceback
-import streamlit as st
-import os
-import sys
-
-# Add parent directory to path to import modules (only if not already present)
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
-
-"""
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
@@ -23,6 +12,16 @@ This file:
     * are modules exposing run() or main()
 - Falls back to a built-in home UI when external home page fails.
 """
+
+import traceback
+import streamlit as st
+import os
+import sys
+
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 
 import importlib
 import types
