@@ -1,20 +1,10 @@
 """
 Main Dashboard with Navigation - Enhanced Version
-"""
 
-import traceback
-import streamlit as st
-import os
-import sys
-
-# Add parent directory to path to import modules (only if not already present)
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
-- Wraps raw CSS in a triple-quoted string and injects via st.markdown(...)
+- Loads CSS from a static file to avoid SyntaxError with CSS variables in Python source
 - Provides a defensive page-loading helper `_try_import_and_run`
 - Uses a defensive home-page loading branch so the app tolerates modules that:
     * return None
@@ -24,54 +14,34 @@ This file:
 """
 
 import importlib
+import logging
+import os
+import sys
 import traceback
 import types
+from pathlib import Path
 from typing import Optional, Tuple
 
 import streamlit as st
 
-# Application CSS - extracted as a separate variable for better code organization and readability
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
+# Load custom CSS from static file
+# This was moved from inline to avoid SyntaxError caused by CSS variables like --card-shadow
+logger = logging.getLogger(__name__)
+_css_path = Path(__file__).resolve().parent / "static" / "css" / "custom.css"
+try:
+    CUSTOM_CSS = _css_path.read_text(encoding="utf-8")
+except Exception:
+    logger.exception("Could not read custom CSS from %s", _css_path)
+    CUSTOM_CSS = ""
+
 # ----------------------------
 # Page config and CSS injection
 # ----------------------------
-st.set_page_config(
-    page_title="Cosmic Decision Intelligence",
-    page_icon="🌌",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# Wrap CSS in a triple-quoted string so Python doesn't try to parse it as code.
-APP_CSS = """
-<style>
-:root {
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Minimal styles — extend/replace with your original CSS inside the quotes */
-.stApp {
-    background: linear-gradient(135deg,
-        #0a0e17 0%,
-        #0c1221 25%,
-        #0e172b 50%,
-        #101d35 75%,
-        #12233f 100%);
-    color: #e0e7ff;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.card {
-  box-shadow: var(--card-shadow);
-  border-radius: 8px;
-  padding: 1rem;
-  background: rgba(255,255,255,0.02);
-}
-
-/* Add any additional CSS from your original file here */
-</style>
-"""
-
-# Page configuration with optimized settings
 st.set_page_config(
     page_title="Comparative Decision Intelligence",
     page_icon="🧠",
@@ -84,7 +54,8 @@ st.set_page_config(
     }
 )
 
-# Apply custom CSS styling (unsafe_allow_html required for style injection)
+# Wrap CSS content in HTML style tags and apply via Streamlit
+APP_CSS = f"<style>\n{CUSTOM_CSS}\n</style>"
 st.markdown(APP_CSS, unsafe_allow_html=True)
 
 
@@ -112,9 +83,6 @@ class DashboardState:
                 'auto_refresh': False,
                 'default_tradition': 'stoic'
             }
-
-# Inject CSS into Streamlit
-st.markdown(APP_CSS, unsafe_allow_html=True)
 
 # ---------------------------------
 # Helper functions for page loading
