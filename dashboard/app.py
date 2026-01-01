@@ -1,6 +1,5 @@
 """
 Main Dashboard with Navigation - Enhanced Version
-"""
 
 import traceback
 import streamlit as st
@@ -16,7 +15,7 @@ if parent_dir not in sys.path:
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
-- Wraps raw CSS in a triple-quoted string and injects via st.markdown(...)
+- Loads CSS from a static file and injects via st.markdown(...)
 - Provides a defensive page-loading helper `_try_import_and_run`
 - Uses a defensive home-page loading branch so the app tolerates modules that:
     * return None
@@ -62,7 +61,7 @@ st.set_page_config(
 )
 
 # Apply custom CSS styling (unsafe_allow_html required for style injection)
-st.markdown(APP_CSS, unsafe_allow_html=True)
+st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
 class DashboardState:
@@ -89,9 +88,6 @@ class DashboardState:
                 'auto_refresh': False,
                 'default_tradition': 'stoic'
             }
-
-# Inject CSS into Streamlit
-st.markdown(APP_CSS, unsafe_allow_html=True)
 
 # ---------------------------------
 # Helper functions for page loading
