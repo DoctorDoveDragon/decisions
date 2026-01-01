@@ -1,6 +1,17 @@
 """
 Main Dashboard with Navigation - Enhanced Version
 
+import traceback
+import streamlit as st
+import os
+import sys
+
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
+"""
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
@@ -13,36 +24,27 @@ This file:
 - Falls back to a built-in home UI when external home page fails.
 """
 
-import traceback
-import streamlit as st
-import os
-import sys
 import importlib
 import types
 from typing import Optional, Tuple
 from pathlib import Path
 import logging
 
-# Add parent directory to path to import modules (only if not already present)
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
-
 logger = logging.getLogger(__name__)
 
 # The CSS was moved to a static file to avoid a SyntaxError when parsing Python source.
 # This keeps compatibility: code importing CUSTOM_CSS will still get the CSS text.
-_css_path = Path(__file__).parent / "static" / "css" / "custom.css"
+_css_path = Path(__file__).resolve().parent / "static" / "css" / "custom.css"
 try:
-    _css_content = _css_path.read_text(encoding="utf-8")
-    CUSTOM_CSS = f"<style>\n{_css_content}\n</style>"
+    CUSTOM_CSS = _css_path.read_text(encoding="utf-8")
 except Exception:
     logger.exception("Could not read custom CSS from %s", _css_path)
     CUSTOM_CSS = ""
 
-# Compatibility alias for code that may import APP_CSS
+# For backward compatibility, also expose as APP_CSS
 APP_CSS = CUSTOM_CSS
 
+# Application CSS - extracted as a separate variable for better code organization and readability
 # ----------------------------
 # Page config and CSS injection
 # ----------------------------
