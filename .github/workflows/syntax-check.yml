@@ -26,11 +26,4 @@ jobs:
         fi
         
     - name: Check Python syntax
-      run: |
-        python -m compileall . -q
-        if [ $? -eq 0 ]; then
-          echo "✓ All Python files have valid syntax"
-        else
-          echo "✗ Syntax errors detected"
-          exit 1
-        fi
+      run: python -m compileall .

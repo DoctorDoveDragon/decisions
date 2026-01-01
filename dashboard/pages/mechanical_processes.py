@@ -28,9 +28,9 @@ try:
             f"Failed to create module spec for: {_original_file}"
         )
     
-    _mechanical_processes_module = importlib.util.module_from_spec(_spec)
-    sys.modules[_spec.name] = _mechanical_processes_module
-    _spec.loader.exec_module(_mechanical_processes_module)
+    _impl_module = importlib.util.module_from_spec(_spec)
+    sys.modules[_spec.name] = _impl_module
+    _spec.loader.exec_module(_impl_module)
     
 except (FileNotFoundError, ImportError) as e:
     raise ImportError(
@@ -43,6 +43,6 @@ def main():
     Render the Mechanical Processes page.
     This function delegates to the main() function in the original file.
     """
-    return _mechanical_processes_module.main()
+    return _impl_module.main()
 
 __all__ = ["main"]
