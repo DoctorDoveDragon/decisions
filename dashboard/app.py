@@ -11,6 +11,8 @@ import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
+
+"""
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
@@ -24,54 +26,29 @@ This file:
 """
 
 import importlib
-import traceback
 import types
 from typing import Optional, Tuple
+from pathlib import Path
+import logging
 
-import streamlit as st
+logger = logging.getLogger(__name__)
+
+# The CSS was moved to a static file to avoid a SyntaxError when parsing Python source.
+# This keeps compatibility: code importing CUSTOM_CSS will still get the CSS text.
+_css_path = Path(__file__).resolve().parent / "static" / "css" / "custom.css"
+try:
+    CUSTOM_CSS = _css_path.read_text(encoding="utf-8")
+except Exception:
+    logger.exception("Could not read custom CSS from %s", _css_path)
+    CUSTOM_CSS = ""
+
+# For backward compatibility, also expose as APP_CSS
+APP_CSS = CUSTOM_CSS
 
 # Application CSS - extracted as a separate variable for better code organization and readability
 # ----------------------------
 # Page config and CSS injection
 # ----------------------------
-st.set_page_config(
-    page_title="Cosmic Decision Intelligence",
-    page_icon="🌌",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# Wrap CSS in a triple-quoted string so Python doesn't try to parse it as code.
-APP_CSS = """
-<style>
-:root {
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Minimal styles — extend/replace with your original CSS inside the quotes */
-.stApp {
-    background: linear-gradient(135deg,
-        #0a0e17 0%,
-        #0c1221 25%,
-        #0e172b 50%,
-        #101d35 75%,
-        #12233f 100%);
-    color: #e0e7ff;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.card {
-  box-shadow: var(--card-shadow);
-  border-radius: 8px;
-  padding: 1rem;
-  background: rgba(255,255,255,0.02);
-}
-
-/* Add any additional CSS from your original file here */
-</style>
-"""
-
-# Page configuration with optimized settings
 st.set_page_config(
     page_title="Comparative Decision Intelligence",
     page_icon="🧠",

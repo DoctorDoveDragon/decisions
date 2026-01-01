@@ -1,0 +1,26 @@
+<style>
+:root {
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Minimal styles — extend/replace with your original CSS inside the quotes */
+.stApp {
+    background: linear-gradient(135deg,
+        #0a0e17 0%,
+        #0c1221 25%,
+        #0e172b 50%,
+        #101d35 75%,
+        #12233f 100%);
+    color: #e0e7ff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.card {
+  box-shadow: var(--card-shadow);
+  border-radius: 8px;
+  padding: 1rem;
+  background: rgba(255,255,255,0.02);
+}
+
+/* Add any additional CSS from your original file here */
+</style>
