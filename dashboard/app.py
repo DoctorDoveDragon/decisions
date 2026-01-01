@@ -249,7 +249,7 @@ else:
                 if not ran:
                     if err:
                         st.error(f"Home page module import failed; showing built-in home page. Details:\n{err}")
-                    show_home_page()
+                    show_built_in_home()
                 ran, err = False, "Loaded home module has no run() or main() entrypoint"
         else:
             # loader_result is None or unexpected; try fallback import routine
