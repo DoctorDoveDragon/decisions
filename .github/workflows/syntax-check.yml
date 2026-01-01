@@ -2,45 +2,28 @@ name: Python Syntax Check
 
 on:
   push:
-    branches:
-      - main
-      - master
-      - develop
+    branches: [ main, master ]
   pull_request:
-    branches:
-      - main
-      - master
-      - develop
+    branches: [ main, master ]
 
 jobs:
   syntax-check:
-    name: Check Python Syntax
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
       
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Install dependencies (optional)
-        run: |
-          if [ -f requirements.txt ]; then
-            python -m pip install --upgrade pip
-            python -m pip install -r requirements.txt || echo "Some dependencies failed to install, continuing with syntax check"
-          fi
-        continue-on-error: true
-      
-      - name: Check Python syntax
-        run: |
-          echo "Checking Python syntax across all .py files..."
-          python -m compileall -q .
-          if [ $? -eq 0 ]; then
-            echo "✓ All Python files have valid syntax"
-          else
-            echo "✗ Syntax errors detected"
-            exit 1
-          fi
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies (if requirements.txt exists)
+      run: |
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
+        
+    - name: Check Python syntax
+      run: python -m compileall .

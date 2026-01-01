@@ -1,6 +1,4 @@
 """
-Main Dashboard with Navigation - Enhanced Version
-
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
@@ -17,18 +15,15 @@ import traceback
 import streamlit as st
 import os
 import sys
+import importlib
+import types
+from pathlib import Path
+import logging
 
 # Add parent directory to path to import modules (only if not already present)
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
-
-import importlib
-import types
-from pathlib import Path
-from typing import Optional, Tuple
-from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -43,21 +38,6 @@ except Exception:
 
 # For backward compatibility, also expose as APP_CSS
 APP_CSS = CUSTOM_CSS
-
-# Add parent directory to path to import modules (only if not already present)
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
-
-# Load custom CSS from static file
-# This was moved from inline to avoid SyntaxError caused by CSS variables like --card-shadow
-logger = logging.getLogger(__name__)
-_css_path = Path(__file__).resolve().parent / "static" / "css" / "custom.css"
-try:
-    CUSTOM_CSS = _css_path.read_text(encoding="utf-8")
-except Exception:
-    logger.exception("Could not read custom CSS from %s", _css_path)
-    CUSTOM_CSS = ""
 
 # ----------------------------
 # Page config and CSS injection
