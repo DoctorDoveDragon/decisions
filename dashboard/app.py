@@ -1,10 +1,21 @@
 """
 Main Dashboard with Navigation - Enhanced Version
 
+import traceback
+import streamlit as st
+import os
+import sys
+
+# Add parent directory to path to import modules (only if not already present)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
+"""
 Dashboard entrypoint with safe CSS injection and defensive page/module loading.
 
 This file:
-- Loads CSS from a static file to avoid SyntaxError with CSS variables in Python source
+- Loads CSS from a static file and injects via st.markdown(...)
 - Provides a defensive page-loading helper `_try_import_and_run`
 - Uses a defensive home-page loading branch so the app tolerates modules that:
     * return None
@@ -14,15 +25,25 @@ This file:
 """
 
 import importlib
-import logging
-import os
-import sys
-import traceback
 import types
 from pathlib import Path
 from typing import Optional, Tuple
+from pathlib import Path
+import logging
 
-import streamlit as st
+logger = logging.getLogger(__name__)
+
+# The CSS was moved to a static file to avoid a SyntaxError when parsing Python source.
+# This keeps compatibility: code importing CUSTOM_CSS will still get the CSS text.
+_css_path = Path(__file__).resolve().parent / "static" / "css" / "custom.css"
+try:
+    CUSTOM_CSS = _css_path.read_text(encoding="utf-8")
+except Exception:
+    logger.exception("Could not read custom CSS from %s", _css_path)
+    CUSTOM_CSS = ""
+
+# For backward compatibility, also expose as APP_CSS
+APP_CSS = CUSTOM_CSS
 
 # Add parent directory to path to import modules (only if not already present)
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,9 +75,8 @@ st.set_page_config(
     }
 )
 
-# Wrap CSS content in HTML style tags and apply via Streamlit
-APP_CSS = f"<style>\n{CUSTOM_CSS}\n</style>"
-st.markdown(APP_CSS, unsafe_allow_html=True)
+# Apply custom CSS styling (unsafe_allow_html required for style injection)
+st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
 class DashboardState:
