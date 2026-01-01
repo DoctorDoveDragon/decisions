@@ -32,13 +32,16 @@ logger = logging.getLogger(__name__)
 
 # The CSS was moved to a static file to avoid a SyntaxError when parsing Python source.
 # This keeps compatibility: code importing CUSTOM_CSS will still get the CSS text.
-_css_path = Path(__file__).resolve().parents[0] / "static" / "css" / "custom.css"
+_css_path = Path(__file__).parent / "static" / "css" / "custom.css"
 try:
     _css_content = _css_path.read_text(encoding="utf-8")
     CUSTOM_CSS = f"<style>\n{_css_content}\n</style>"
 except Exception:
     logger.exception("Could not read custom CSS from %s", _css_path)
     CUSTOM_CSS = ""
+
+# Compatibility alias for code that may import APP_CSS
+APP_CSS = CUSTOM_CSS
 
 # ----------------------------
 # Page config and CSS injection
@@ -83,9 +86,6 @@ class DashboardState:
                 'auto_refresh': False,
                 'default_tradition': 'stoic'
             }
-
-# Inject CSS into Streamlit
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 # ---------------------------------
 # Helper functions for page loading
