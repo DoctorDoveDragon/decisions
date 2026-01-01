@@ -152,6 +152,10 @@ dist/
 # Cosmic theme backup files
 dashboard/app_backup_*.py
 
+# Backup files
+*.backup
+*.bak
+
 # Python
 __pycache__/
 *.py[cod]
